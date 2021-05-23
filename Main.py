@@ -11,6 +11,7 @@ from kivy.clock import Clock
 from kivy.uix.textinput import TextInput
 from array import array
 from kivy.config import Config
+import config
 import Bot
 from Map import Map
 import random
@@ -95,13 +96,21 @@ class MainScreen(Label):
 
     def save(self):
         bact_map.save(f'saves/{self.ids.file_name.text}.txt')
+        with open('config.py', 'w') as file:
+            file.write(f"last_opened = '{self.ids.file_name.text}'")
 
-    def load(self):
+    def load_from_button(self):
+        self.load(self.ids.file_name.text)
+
+    def load(self, filename):
         
         try:
-            bact_map.load(f'saves/{self.ids.file_name.text}.txt')
+            bact_map.load(f'saves/{filename}.txt')
             Bact_canvas.canvas_size = bact_map.size
             Bact_canvas.tex = Texture.create(size = Bact_canvas.canvas_size)
+            with open('config.py', 'w') as file:
+                file.write(f"last_opened = '{filename}'")
+            
         except:
             self.ids.console.text = 'File load error'
     
@@ -164,6 +173,9 @@ class BCanvas(Widget):
     def draw(self, t):
         self.buf = t
         self.texture_array = array('B', self.buf)
+        if self.tex.min_filter != 'nearest' or self.tex.mag_filter != 'nearest':
+            self.tex.min_filter = 'nearest'
+            self.tex.mag_filter = 'nearest'
         self.size = Window.size
         self.padding_x = Window.size[0] * 0.25
         self.padding_y = Window.size[1] * 0.25
@@ -198,6 +210,12 @@ class Kivytest(App):
         bact_map = Map(size = (Bact_canvas.canvas_size[0], Bact_canvas.canvas_size[1]))
         bact_map.spawn_bot([1,1])
         self.mainloop = Clock.schedule_interval(self.main_screen.main_loop_func, 1 / 30.)
+        try:
+            if not config.last_opened == '':
+                self.main_screen.load(config.last_opened)
+        except:
+            with open('config.py', 'w') as file:
+                file.write(f"last_opened = ''")
 
 
 if __name__ == '__main__':
