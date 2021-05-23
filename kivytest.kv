@@ -1,0 +1,96 @@
+#:kivy 2.0.0
+
+<MainScreen>:
+
+    multisamples: 0
+
+    FloatLayout:
+        size: root.width, root.height
+
+        Button:
+            id: pause_button
+            text: 'Not Paused'
+            pos_hint: {'x': 0.02, 'y': 0.92}
+            size_hint: 0.21, 0.07
+            on_press: root.toggle_pause()
+        
+        Button:
+            text: 'Save'
+            pos_hint: {'x': 0.02, 'y': 0.83}
+            size_hint: 0.21, 0.07
+            on_press: root.save()
+
+        Button:
+            text: 'Load'
+            pos_hint: {'x': 0.02, 'y': 0.75}
+            size_hint: 0.21, 0.07
+            on_press: root.load()
+
+        Button:
+            text: 'New'
+            pos_hint: {'x': 0.02, 'y': 0.59}
+            size_hint: 0.21, 0.07
+            on_press: root.new()
+        
+        Button:
+            id: toggle_interaction_mode_button
+            text: 'Toggle interaction mode:\n           Cell info'
+            pos_hint: {'x': 0.02, 'y': 0.24}
+            size_hint: 0.21, 0.07
+            on_press: root.toggle_interaction_mode()
+
+        Button:
+            id: toggle_display_mode_button
+            text: 'Toggle display mode:\n        Energy'
+            pos_hint: {'x': 0.02, 'y': 0.32}
+            size_hint: 0.21, 0.07
+            on_press: root.toggle_display_mode()
+        
+        CheckBox:
+            id: gen_noise
+            pos_hint: {'x': 0, 'y': 0.43}
+            size_hint: 0.07, 0.07
+            on_active: root.set_gen_noise(self, self.active)
+        
+        Label:
+            text: 'Generate random\n energy map'
+            multiline: 
+            pos_hint: {'x': 0.06, 'y': 0.43}
+            size_hint: 0.17, 0.07
+
+        TextInput:
+            id: file_name
+            hint_text: 'File name'
+            size_hint: 0.21, 0.07
+            pos_hint: {'x': 0.02, 'y': 0.67}
+        
+        TextInput:
+            input_filter: 'int'
+            id: new_size_x
+            hint_text: 'X Size'
+            size_hint: 0.1, 0.07
+            pos_hint: {'x': 0.02, 'y': 0.51}
+        
+        TextInput:
+            input_filter: 'int'
+            id: new_size_y
+            hint_text: 'Y Size'
+            size_hint: 0.1, 0.07
+            pos_hint: {'x': 0.13, 'y': 0.51}
+
+        TextInput:
+            id: bot_info
+            size_hint: 0.96, 0.1
+            pos_hint: {'x': 0.02, 'y': 0.12}
+
+        Label:
+            id: console
+            size_hint: 0.8, 0.1
+            pos_hint: {'x': 0, 'y': 0}
+
+        Label:
+            id: bots_num
+            size_hint: 0.2, 0.1
+            pos_hint: {'x': 0.8, 'y': 0}
+        
+        
