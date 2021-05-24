@@ -38,6 +38,8 @@ class Map:
         self.map[pos_x][pos_y].change_energy_sources(self.sun_map[pos_x][pos_y], self.minerals_map[pos_x][pos_y])
         while action_points > 0 and actions <= 15:
             action = bot.action()
+            if actions == 15:
+                self.map[pos_x][pos_y].add_energy(-6)
             
             if action[0] == 'die': #erasing bot
                 self.map[pos_x][pos_y] = Bot.Organic()
@@ -197,6 +199,7 @@ class Map:
             if (action_points == 0 or actions > 15) and type(self.map[pos_x][pos_y]) == Bot.Bot:
                 self.map[pos_x][pos_y].reduce_aggressiveness()
             actions += 1
+
     
     def generate_energy_map(self):
         noise = create_noise(self.size[0], self.size[1])

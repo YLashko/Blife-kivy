@@ -33,7 +33,7 @@ class Bot:
         self.minerals_level = 3
         self.aggressiveness = 0
         self.max_difference = 1
-        self.passive_energy_drain = 5
+        self.passive_energy_drain = -5
         self.current_action = curr_action
         self.sun_level = sun_level
         self.energy = energy
