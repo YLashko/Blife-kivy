@@ -40,7 +40,7 @@ class MainScreen(Label):
                         else:
                             color = [0, 0, 0]
                     else:
-                        if int(bact_map.map[y][x].energy) <= 255 and int(bact_map.map[y][x].energy) > 0:
+                        if int(bact_map.map[y][x].energy) <= 255 and int(bact_map.map[y][x].energy) >= 0:
                             if bact_map.map[y][x].energy_source == 1:
                                 color = [0, int(bact_map.map[y][x].energy), 0]
                             elif bact_map.map[y][x].energy_source == 2:

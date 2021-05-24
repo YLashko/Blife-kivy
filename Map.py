@@ -118,7 +118,6 @@ class Map:
                 self.map[pos_x][pos_y].jump_action(1)
             
             elif action[0] == 'look':
-                action_points += 1
                 coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
                 if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
                     if self.map[coords[0]][coords[1]] == self.map[pos_x][pos_y]:
@@ -132,6 +131,7 @@ class Map:
                 else:
                     num = 5
                 self.map[pos_x][pos_y].receive_jump_action(num)
+                action_points += 1
                 
             elif action[0] == 'eat_otn' or action[0] == 'eat_abs':
                 if action[0] == 'eat_otn':
