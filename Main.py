@@ -86,6 +86,23 @@ class MainScreen(Label):
         self.display_modes = ['Energy', 'Energy source', 'Aggressiveness']
         self.display_mode = (self.display_mode + 1) % len(self.display_modes)
         self.ids.toggle_display_mode_button.text = f'Toggle display mode:\n        {self.display_modes[self.display_mode]}'
+    
+    def toggle_recording(self, set_ = False, value = False):
+        if not set_:
+            if not self.recording and self.ids.file_name.text != '':
+                self.recording = True
+            else:
+                self.recording = False
+                bact_map.set_recording(False)
+            if self.recording and self.ids.file_name.text != '':
+                bact_map.stats_filename = self.ids.file_name.text
+                with open(f'./stats/files/{self.ids.file_name.text}.txt', 'w') as file:
+                    file.write('')
+                bact_map.set_recording(True)
+        else:
+            self.recording = value
+        self.ids.recording.text = 'Stop recording' if self.recording else 'Start recording'
+        self.ids.recording.background_color = (0, 0.3, 0, 1) if self.recording else (0.3, 0, 0.1, 1)
 
     def set_generate_energy_map(self, val):
         self.generate_energy_map = val
@@ -95,6 +112,9 @@ class MainScreen(Label):
 
     def set_mode(self, mode):
         self.mode = mode
+
+    def set_recording(self, value = False):
+        self.recording = value
     
     def set_display_mode(self, mode):
         self.display_mode = mode
@@ -115,6 +135,8 @@ class MainScreen(Label):
             Bact_canvas.tex = Texture.create(size = Bact_canvas.canvas_size)
             with open('config.py', 'w') as file:
                 file.write(f"last_opened = '{filename}'")
+            self.toggle_recording(True, False)
+            
             
         except:
             self.ids.console.text = 'File load error'
@@ -130,6 +152,7 @@ class MainScreen(Label):
                     bact_map.generate_energy_map()
                 with open('config.py', 'w') as file:
                     file.write(f"last_opened = ''")
+                self.toggle_recording(True, False)
         except:
             self.ids.console.text = 'Error'
     
@@ -204,6 +227,7 @@ class Kivytest(App):
 
         self.main_screen.set_mode(0)
         self.main_screen.set_display_mode(0)
+        self.main_screen.set_recording(False)
 
         self.main_screen.set_generate_energy_map(False)
         self.main_screen.add_widget(Bact_canvas)

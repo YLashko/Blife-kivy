@@ -16,6 +16,7 @@ class Map:
     def __init__(self, size = (180,120), sun_level = 12):
         self.size = size
         self.sun_level = sun_level
+        self.stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0}
         self.new(self.size, self.sun_level)
 
     def spawn_bot(self, position, genes = '', sun_level = 3, curr_action = 0, energy = 25, direction = 1):
@@ -25,24 +26,37 @@ class Map:
         for x in range(self.size[0]):
             for y in range(self.size[1]):
                 if type(self.map[x][y]) == Bot.Bot:
+                    if self.recording:
+                        self.stats['bots'] += 1
+                        self.stats['energy'] += self.map[x][y].get_energy()
+                        self.stats['aggressiveness'] += self.map[x][y].aggressiveness
+                        if self.map[x][y].energy_source == 1:
+                            self.stats['green'] += 1
+                        elif self.map[x][y].energy_source == 2:
+                            self.stats['blue'] += 1
                     self.bot_turn(self.map[x][y], x, y)
                 elif type(self.map[x][y]) == Bot.Organic:
                     org_func = self.map[x][y].turn()
                     if org_func == 'die':
                         self.map[x][y] = 0
+        if self.recording:
+            if self.stats_counter >= self.recording_step:
+                self.divide_and_write_stats(self.stats_filename, self.recording_step)
+                self.stats_counter = 0
+            self.stats_counter += 1
 
     def bot_turn(self, bot, pos_x, pos_y):
         action_points = 1
         actions = 0
         self.map[pos_x][pos_y].add_energy(-1)
         self.map[pos_x][pos_y].change_energy_sources(self.sun_map[pos_x][pos_y], self.minerals_map[pos_x][pos_y])
+        self.map[pos_x][pos_y].add_energy(-6)
         while action_points > 0 and actions <= 15:
             action = bot.action()
-            if actions == 15:
-                self.map[pos_x][pos_y].add_energy(-6)
-            
             if action[0] == 'die': #erasing bot
                 self.map[pos_x][pos_y] = Bot.Organic()
+                if self.recording:
+                    self.stats['deaths'] += 1
             
             elif action[0] == 'budd_otn': #spawning new bot
                 coords = [cut(pos_x + directions[cut(cut(action[2] + action[1] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[2] + action[1] % 8))][1], self.size[1] - 1)]
@@ -52,6 +66,8 @@ class Map:
                         self.spawn_bot([coords[0], coords[1]], action[3], action[4], action[5], action[6], action[7])
                         if random.randint(1,3) <= 1:
                             self.map[coords[0]][coords[1]].mutate()
+                        if self.recording:
+                            self.stats['born'] += 1
                     else:
                         can_spawn_on_dir = False
                 else:
@@ -68,8 +84,12 @@ class Map:
                         self.spawn_bot(ran_dir_choose[rand], action[3], action[4], action[5], action[6], action[7])
                         if random.randint(1,3) <= 1:
                             self.map[ran_dir_choose[rand][0]][ran_dir_choose[rand][1]].mutate()
+                        if self.recording:
+                            self.stats['born'] += 1
                     else:
                         self.map[pos_x][pos_y] = Bot.Organic()
+                        if self.recording:
+                            self.stats['deaths'] += 1
                 
             elif action[0] == 'move_otn':
                 coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
@@ -153,6 +173,8 @@ class Map:
                 if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
                     self.map[coords[0]][coords[1]] = 0
                     self.map[pos_x][pos_y].add_energy(80)
+                    if self.recording:
+                        self.stats['deaths'] += 1
                 elif type(self.map[coords[0]][coords[1]]) == Bot.Organic:
                     self.map[coords[0]][coords[1]] = 0
                     self.map[pos_x][pos_y].add_energy(70)
@@ -200,6 +222,18 @@ class Map:
                 self.map[pos_x][pos_y].reduce_aggressiveness()
             actions += 1
 
+
+    def divide_and_write_stats(self, filename = 'stats', step = 200):
+        self.stats['energy'] /= self.stats['bots']
+        self.stats['aggressiveness'] /= self.stats['bots']
+        self.stats['bots'] /= step
+        self.stats['green'] /= step
+        self.stats['blue'] /= step
+        self.stats['deaths'] /= step
+        self.stats['born'] /= step
+        with open(f'./stats/files/{filename}.txt', 'a') as file:
+            file.write(str(self.stats) + '\n')
+        self.stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0}
     
     def generate_energy_map(self):
         noise = create_noise(self.size[0], self.size[1])
@@ -261,6 +295,10 @@ class Map:
                 buf_num += 1
         
     def new(self, size = [100, 75], sun_level = 12):
+        self.recording_step = 100
+        self.stats_counter = 0
+        self.stats_filename = ''
+        self.recording = False
         self.size = size
         self.sun_level = sun_level
         self.sun_map = []
@@ -280,6 +318,9 @@ class Map:
                     self.sun_map[x].append(0)
                     self.minerals_map[x].append(sun_level)
                 else:
-                    self.sun_map[x].append(12)
+                    self.sun_map[x].append(sun_level)
                     self.minerals_map[x].append(0)
         self.spawn_bot([1,1])
+
+    def set_recording(self, value):
+        self.recording = value
