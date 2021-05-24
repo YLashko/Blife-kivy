@@ -39,6 +39,7 @@ class Bot:
         self.energy = energy
         self.direction = direction
         self.minerals_level = minerals_level
+        self.energy_source = 0
 
     def __str__(self):
         info = []
@@ -76,8 +77,10 @@ class Bot:
             if self.genes[self.current_action] >= action[i]['min_num'] and self.genes[self.current_action] <= action[i]['max_num']:    
                 if action[i]['name'] == 'photosynthesis':
                     self.energy += self.sun_level * action[i]['energy']
+                    self.energy_source = 1
                 elif action[i]['name'] == 'get_minerals':
                     self.energy += self.minerals_level * action[i]['energy']
+                    self.energy_source = 2
                 else:
                     self.energy += action[i]['energy']
                     

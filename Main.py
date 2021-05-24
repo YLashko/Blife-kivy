@@ -41,7 +41,12 @@ class MainScreen(Label):
                             color = [0, 0, 0]
                     else:
                         if int(bact_map.map[y][x].energy) <= 255 and int(bact_map.map[y][x].energy) > 0:
-                            color = [0, int(bact_map.map[y][x].energy), 0]
+                            if bact_map.map[y][x].energy_source == 1:
+                                color = [0, int(bact_map.map[y][x].energy), 0]
+                            elif bact_map.map[y][x].energy_source == 2:
+                                color = [0, 0, int(bact_map.map[y][x].energy)]
+                            else:
+                                color = [int(bact_map.map[y][x].energy), int(bact_map.map[y][x].energy), 0]
                         else:
                             color = [0, 255, 0]
                 
@@ -123,6 +128,8 @@ class MainScreen(Label):
                 Bact_canvas.tex = Texture.create(size = Bact_canvas.canvas_size)
                 if self.generate_energy_map:
                     bact_map.generate_energy_map()
+                with open('config.py', 'w') as file:
+                    file.write(f"last_opened = ''")
         except:
             self.ids.console.text = 'Error'
     

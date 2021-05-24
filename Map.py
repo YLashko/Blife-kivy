@@ -78,7 +78,7 @@ class Map:
                         num = 2
                 elif self.map[coords[0]][coords[1]] == 0:
                     num = 3
-                elif self.map[coords[0]][coords[1]] == 0:
+                elif self.map[coords[0]][coords[1]] == 1:
                     num = 4
                 else:
                     num = 5
@@ -98,7 +98,7 @@ class Map:
                         num = 2
                 elif self.map[coords[0]][coords[1]] == 0:
                     num = 3
-                elif self.map[coords[0]][coords[1]] == 0:
+                elif self.map[coords[0]][coords[1]] == 1:
                     num = 4
                 else:
                     num = 5
@@ -127,7 +127,7 @@ class Map:
                         num = 2
                 elif self.map[coords[0]][coords[1]] == 0:
                     num = 3
-                elif self.map[coords[0]][coords[1]] == 0:
+                elif self.map[coords[0]][coords[1]] == 1:
                     num = 4
                 else:
                     num = 5
@@ -142,7 +142,7 @@ class Map:
                     num = 1
                 elif self.map[coords[0]][coords[1]] == 0:
                     num = 3
-                elif self.map[coords[0]][coords[1]] == 0:
+                elif self.map[coords[0]][coords[1]] == 1:
                     num = 4
                 else:
                     num = 5
