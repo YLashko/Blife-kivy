@@ -3,7 +3,7 @@ import Actions
 import random
 from noise_generator import *
 directions = [[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1]]
-
+default_stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0, 'looks':0, 'shares':0, 'turns':0, 'moves':0}
 def cut(num, max_num = 7, min_num = 0):
     if num > max_num:
         return num - max_num - 1
@@ -16,7 +16,7 @@ class Map:
     def __init__(self, size = (180,120), sun_level = 12):
         self.size = size
         self.sun_level = sun_level
-        self.stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0}
+        self.stats = default_stats
         self.new(self.size, self.sun_level)
 
     def spawn_bot(self, position, genes = '', sun_level = 3, curr_action = 0, energy = 25, direction = 1):
@@ -110,6 +110,8 @@ class Map:
                     if self.map[coords[0]][coords[1]] == 0:
                         self.map[coords[0]][coords[1]] = self.map[pos_x][pos_y]
                         self.map[pos_x][pos_y] = 0
+                        if self.recording:
+                            self.stats['moves'] += 1
             
             elif action[0] == 'move_abs': 
                 coords = [cut(pos_x + directions[cut(cut(action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[2] % 8))][1], self.size[1] - 1)]
@@ -130,14 +132,20 @@ class Map:
                     if self.map[coords[0]][coords[1]] == 0:
                         self.map[coords[0]][coords[1]] = self.map[pos_x][pos_y]
                         self.map[pos_x][pos_y] = 0
+                        if self.recording:
+                            self.stats['moves'] += 1
             
             elif action[0] == 'turn_abs':
                 action_points += 1
                 self.map[pos_x][pos_y].jump_action(1)
+                if self.recording:
+                    self.stats['turns'] += 1
                 
             elif action[0] == 'turn_otn':
                 action_points += 1
                 self.map[pos_x][pos_y].jump_action(1)
+                if self.recording:
+                    self.stats['turns'] += 1
             
             elif action[0] == 'look':
                 coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
@@ -153,6 +161,8 @@ class Map:
                 else:
                     num = 5
                 self.map[pos_x][pos_y].receive_jump_action(num)
+                if self.recording:
+                    self.stats['looks'] += 1
                 action_points += 1
                 
             elif action[0] == 'eat_otn' or action[0] == 'eat_abs':
@@ -189,6 +199,8 @@ class Map:
                     self.map[coords[0]][coords[1]].add_energy(energy, True)
                     self.map[pos_x][pos_y].add_energy(energy, True)
                 action_points += 1
+                if self.recording:
+                    self.stats['shares'] += 1
                 self.map[pos_x][pos_y].jump_action(1)
             
             elif action[0] == 'how_much_energy':
@@ -226,6 +238,10 @@ class Map:
     def divide_and_write_stats(self, filename = 'stats', step = 200):
         self.stats['energy'] /= self.stats['bots']
         self.stats['aggressiveness'] /= self.stats['bots']
+        self.stats['looks'] /= step
+        self.stats['moves'] /= step
+        self.stats['shares'] /= step
+        self.stats['turns'] /= step
         self.stats['bots'] /= step
         self.stats['green'] /= step
         self.stats['blue'] /= step
@@ -233,7 +249,7 @@ class Map:
         self.stats['born'] /= step
         with open(f'./stats/files/{filename}.txt', 'a') as file:
             file.write(str(self.stats) + '\n')
-        self.stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0}
+        self.stats = default_stats
     
     def generate_energy_map(self):
         noise = create_noise(self.size[0], self.size[1])

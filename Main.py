@@ -96,8 +96,12 @@ class MainScreen(Label):
                 bact_map.set_recording(False)
             if self.recording and self.ids.file_name.text != '':
                 bact_map.stats_filename = self.ids.file_name.text
-                with open(f'./stats/files/{self.ids.file_name.text}.txt', 'w') as file:
-                    file.write('')
+                try:
+                    a = open(f'./stats/files/{self.ids.file_name.text}.txt', 'r')
+                    a.close()
+                except:
+                    with open(f'./stats/files/{self.ids.file_name.text}.txt', 'w') as file:
+                        file.write('')
                 bact_map.set_recording(True)
         else:
             self.recording = value

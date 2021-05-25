@@ -2,13 +2,13 @@ actions = [{
     'min_num':26,
     'max_num':27,
     'name':'move_otn',
-    'energy':-20,
+    'energy':-6,
 },
 {
     'min_num':28,
     'max_num':29,
     'name':'move_abs',
-    'energy':-20,
+    'energy':-6,
 },
 {
     'min_num':24,

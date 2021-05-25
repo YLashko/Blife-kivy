@@ -1,1 +1,1 @@
-last_opened = ''
+last_opened = 'ts1'
