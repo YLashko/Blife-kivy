@@ -48,6 +48,7 @@ class Map:
     def bot_turn(self, bot, pos_x, pos_y):
         action_points = 1
         actions = 0
+        self.map[pos_x][pos_y].look = False
         self.map[pos_x][pos_y].add_energy(-1)
         self.map[pos_x][pos_y].change_energy_sources(self.sun_map[pos_x][pos_y], self.minerals_map[pos_x][pos_y])
         self.map[pos_x][pos_y].add_energy(-6)
@@ -163,6 +164,7 @@ class Map:
                 self.map[pos_x][pos_y].receive_jump_action(num)
                 if self.recording:
                     self.stats['looks'] += 1
+                self.map[pos_x][pos_y].look = True
                 action_points += 1
                 
             elif action[0] == 'eat_otn' or action[0] == 'eat_abs':

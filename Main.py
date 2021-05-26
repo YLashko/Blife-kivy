@@ -60,6 +60,12 @@ class MainScreen(Label):
                         color = [128, 128, 128]
                     else:
                         color = [0, 0, 0]
+                
+                elif self.display_mode == 3:
+                    if type(bact_map.map[y][x]) == Bot.Bot:
+                        color = [255, 255, 255] if bact_map.map[y][x].look else [96, 96, 96]
+                    else:
+                        color = [0, 0, 0]
     
                 if type(bact_map.map[y][x]) == Bot.Bot:
                     self.bots += 1
@@ -83,7 +89,7 @@ class MainScreen(Label):
         Bact_canvas.set_mode(self.modes[self.mode])
 
     def toggle_display_mode(self):
-        self.display_modes = ['Energy', 'Energy source', 'Aggressiveness']
+        self.display_modes = ['Energy', 'Energy map', 'Aggressiveness', 'Looks']
         self.display_mode = (self.display_mode + 1) % len(self.display_modes)
         self.ids.toggle_display_mode_button.text = f'Toggle display mode:\n        {self.display_modes[self.display_mode]}'
     

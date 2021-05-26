@@ -30,6 +30,7 @@ class Bot:
             for i in range(64):
                 self.genes.append(25)
         
+        self.look = False
         self.minerals_level = 3
         self.aggressiveness = 0
         self.max_difference = 1
