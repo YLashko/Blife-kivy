@@ -91,7 +91,7 @@ class MainScreen(Label):
     def toggle_display_mode(self):
         self.display_modes = ['Energy', 'Energy map', 'Aggressiveness', 'Looks']
         self.display_mode = (self.display_mode + 1) % len(self.display_modes)
-        self.ids.toggle_display_mode_button.text = f'Toggle display mode:\n        {self.display_modes[self.display_mode]}'
+        self.ids.toggle_display_mode_button.text = f'Toggle render mode:\n        {self.display_modes[self.display_mode]}'
     
     def toggle_recording(self, set_ = False, value = False):
         if not set_:
@@ -226,7 +226,7 @@ class BCanvas(Widget):
             Rectangle(texture = self.tex, pos = (self.padding_x, self.padding_y), size = (self.pix_size_x, self.pix_size_y))
 
 
-class Kivytest(App):
+class Bact_life(App):
 
     def build(self):
         self.main_screen = MainScreen()
@@ -260,4 +260,4 @@ class Kivytest(App):
 
 
 if __name__ == '__main__':
-    Kivytest().run()
+    Bact_life().run()
