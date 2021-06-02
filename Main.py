@@ -1,20 +1,14 @@
 from kivy.app import App
-from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.layout import Layout
-from kivy.uix.checkbox import CheckBox
 from kivy.core.window import Window
-from kivy.graphics import Rectangle, Color, Ellipse
+from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.clock import Clock
-from kivy.uix.textinput import TextInput
 from array import array
-from kivy.config import Config
 import config
 import Bot
 from Map import Map
-import random
 
 class MainScreen(Label):
 
@@ -34,8 +28,8 @@ class MainScreen(Label):
             for y in range(Bact_canvas.canvas_size[0]):
 
                 if self.display_mode == 0:
-                    if type(bact_map.map[y][x]) != Bot.Bot:
-                        if type(bact_map.map[y][x]) == Bot.Organic:
+                    if not isinstance(bact_map.map[y][x], Bot.Bot):
+                        if isinstance(bact_map.map[y][x], Bot.Organic):
                             color = [128, 128, 128]
                         else:
                             color = [0, 0, 0]
@@ -54,20 +48,20 @@ class MainScreen(Label):
                     color = [0, bact_map.sun_map[y][x] * 15, bact_map.minerals_map[y][x] * 15]
                 
                 elif self.display_mode == 2:
-                    if type(bact_map.map[y][x]) == Bot.Bot:
+                    if isinstance(bact_map.map[y][x], Bot.Bot):
                         color = [bact_map.map[y][x].aggressiveness * 12, 250 - bact_map.map[y][x].aggressiveness * 12, 0]
-                    elif type(bact_map.map[y][x]) == Bot.Organic:
+                    elif isinstance(bact_map.map[y][x], Bot.Organic):
                         color = [128, 128, 128]
                     else:
                         color = [0, 0, 0]
                 
                 elif self.display_mode == 3:
-                    if type(bact_map.map[y][x]) == Bot.Bot:
+                    if isinstance(bact_map.map[y][x], Bot.Bot):
                         color = [255, 255, 255] if bact_map.map[y][x].look else [96, 96, 96]
                     else:
                         color = [0, 0, 0]
     
-                if type(bact_map.map[y][x]) == Bot.Bot:
+                if isinstance(bact_map.map[y][x], Bot.Bot):
                     self.bots += 1
                 for i in range(3): self.texture_arr.append(color[i])
             Bact_canvas.update_canvas()

@@ -1,7 +1,7 @@
 import Bot
 import Actions
 import random
-from noise_generator import *
+from noise_generator import cut_noise, ret_min_map, ret_sun_map, AA, round_, inc_contrast, create_noise
 directions = [[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1]]
 default_stats = {'bots':0, 'aggressiveness':0, 'green':0, 'blue':0, 'energy':0, 'deaths':0, 'born':0, 'looks':0, 'shares':0, 'turns':0, 'moves':0}
 def cut(num, max_num = 7, min_num = 0):
@@ -49,9 +49,8 @@ class Map:
         action_points = 1
         actions = 0
         self.map[pos_x][pos_y].look = False
-        self.map[pos_x][pos_y].add_energy(-1)
+        self.map[pos_x][pos_y].add_energy(-7)
         self.map[pos_x][pos_y].change_energy_sources(self.sun_map[pos_x][pos_y], self.minerals_map[pos_x][pos_y])
-        self.map[pos_x][pos_y].add_energy(-6)
         while action_points > 0 and actions <= 15:
             action = bot.action()
             if action[0] == 'die': #erasing bot
@@ -62,7 +61,7 @@ class Map:
             elif action[0] == 'budd_otn': #spawning new bot
                 coords = [cut(pos_x + directions[cut(cut(action[2] + action[1] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[2] + action[1] % 8))][1], self.size[1] - 1)]
                 can_spawn_on_dir = True
-                if type(self.map[coords[0]][coords[1]]) != Bot.Bot and type(self.map[coords[0]][coords[1]]) != Bot.Organic:
+                if not isinstance(self.map[coords[0]][coords[1]], Bot.Bot) and not isinstance(self.map[coords[0]][coords[1]], Bot.Organic):
                     if self.map[coords[0]][coords[1]] == 0:
                         self.spawn_bot([coords[0], coords[1]], action[3], action[4], action[5], action[6], action[7])
                         if random.randint(1,3) <= 1:
@@ -94,7 +93,7 @@ class Map:
                 
             elif action[0] == 'move_otn':
                 coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
-                if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
+                if isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     if self.map[coords[0]][coords[1]] == self.map[pos_x][pos_y]:
                         num = 1
                     else:
@@ -107,7 +106,7 @@ class Map:
                     num = 5
                 self.map[pos_x][pos_y].receive_jump_action(num)
                 
-                if type(self.map[coords[0]][coords[1]]) != Bot.Bot:
+                if not isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     if self.map[coords[0]][coords[1]] == 0:
                         self.map[coords[0]][coords[1]] = self.map[pos_x][pos_y]
                         self.map[pos_x][pos_y] = 0
@@ -116,7 +115,7 @@ class Map:
             
             elif action[0] == 'move_abs': 
                 coords = [cut(pos_x + directions[cut(cut(action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[2] % 8))][1], self.size[1] - 1)]
-                if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
+                if isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     if self.map[coords[0]][coords[1]] == self.map[pos_x][pos_y]:
                         num = 1
                     else:
@@ -129,7 +128,7 @@ class Map:
                     num = 5
                 self.map[pos_x][pos_y].receive_jump_action(num)
                 
-                if type(self.map[coords[0]][coords[1]]) != Bot.Bot:
+                if not isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     if self.map[coords[0]][coords[1]] == 0:
                         self.map[coords[0]][coords[1]] = self.map[pos_x][pos_y]
                         self.map[pos_x][pos_y] = 0
@@ -150,7 +149,7 @@ class Map:
             
             elif action[0] == 'look':
                 coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
-                if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
+                if isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     if self.map[coords[0]][coords[1]] == self.map[pos_x][pos_y]:
                         num = 1
                     else:
@@ -172,7 +171,7 @@ class Map:
                     coords = [cut(pos_x + directions[cut(cut(action[3] + action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[3] + action[2] % 8))][1], self.size[1] - 1)]
                 else:
                     coords = [cut(pos_x + directions[cut(cut(action[2] % 8))][0], self.size[0] - 1), cut(pos_y + directions[cut(cut(action[2] % 8))][1], self.size[1] - 1)]
-                if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
+                if isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     num = 1
                 elif self.map[coords[0]][coords[1]] == 0:
                     num = 3
@@ -182,12 +181,12 @@ class Map:
                     num = 5
                 self.map[pos_x][pos_y].receive_jump_action(num)
                 
-                if type(self.map[coords[0]][coords[1]]) == Bot.Bot:
+                if isinstance(self.map[coords[0]][coords[1]], Bot.Bot):
                     self.map[coords[0]][coords[1]] = 0
                     self.map[pos_x][pos_y].add_energy(80)
                     if self.recording:
                         self.stats['deaths'] += 1
-                elif type(self.map[coords[0]][coords[1]]) == Bot.Organic:
+                elif isinstance(self.map[coords[0]][coords[1]], Bot.Organic):
                     self.map[coords[0]][coords[1]] = 0
                     self.map[pos_x][pos_y].add_energy(70)
                     
@@ -232,7 +231,7 @@ class Map:
             
             
             action_points -= 1
-            if (action_points == 0 or actions > 15) and type(self.map[pos_x][pos_y]) == Bot.Bot:
+            if (action_points == 0 or actions > 15) and isinstance(self.map[pos_x][pos_y], Bot.Bot):
                 self.map[pos_x][pos_y].reduce_aggressiveness()
             actions += 1
 
@@ -257,7 +256,7 @@ class Map:
         noise = create_noise(self.size[0], self.size[1])
         noise = AA(noise)
         noise = AA(noise)
-        for i in range(3):
+        for _ in range(3):
             noise = inc_contrast(noise)
         noise = round_(noise)
         noise = cut_noise(noise, 255, 0)

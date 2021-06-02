@@ -27,7 +27,7 @@ class Bot:
         
         self.genes = list(genes)
         if genes == '':
-            for i in range(64):
+            for _ in range(64):
                 self.genes.append(25)
         
         self.look = False
@@ -93,10 +93,10 @@ class Bot:
                 elif action[i]['name'] == 'action++':
                     self.jump_action(self.genes[self.current_action])
                 elif action[i]['name'] == 'how_much_energy':
-                    if self.energy > self.genes[cut(self.current_action + 1)] * 3:
-                        self.receive_jump_action(2)
+                    if self.energy > self.genes[cut(self.current_action + 1)] * 4:
+                        self.receive_jump_action(3)
                     else:
-                        self.receive_jump_action(1)
+                        self.receive_jump_action(2)
                 elif action[i]['name'] == 'eat_otn' or action[i]['name'] == 'eat_abs':
                     self.aggressiveness = 20
                 return [action[i]['name'], directions[cut(self.direction, 7, 0)], self.genes[cut(self.current_action + 1)], self.direction]

@@ -32,13 +32,13 @@ actions = [{
     'min_num':34,
     'max_num':35,
     'name':'eat_otn',
-    'energy':-10,
+    'energy':-6,
 },
 {
     'min_num':36,
     'max_num':37,
     'name':'eat_abs',
-    'energy':-10,
+    'energy':-6,
 },
 {
     'min_num':38,
