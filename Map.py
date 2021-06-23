@@ -26,6 +26,7 @@ class Map:
         for x in range(self.size[0]):
             for y in range(self.size[1]):
                 if type(self.map[x][y]) == Bot.Bot:
+
                     if self.recording:
                         self.stats['bots'] += 1
                         self.stats['energy'] += self.map[x][y].get_energy()
@@ -34,6 +35,7 @@ class Map:
                             self.stats['green'] += 1
                         elif self.map[x][y].energy_source == 2:
                             self.stats['blue'] += 1
+                        
                     self.bot_turn(self.map[x][y], x, y)
                 elif type(self.map[x][y]) == Bot.Organic:
                     org_func = self.map[x][y].turn()
