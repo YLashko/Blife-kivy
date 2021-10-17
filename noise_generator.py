@@ -33,7 +33,7 @@ def ret_min_map(noise):
                 min_map[i][o] = 16
     return min_map  
 
-def create_noise(x, y, maxsize = 15): #This is my very old shit(around 10.2020)
+def create_noise(x, y, maxsize = 15):
     pixels = []
     ret = []
     for i in range(x+maxsize):
